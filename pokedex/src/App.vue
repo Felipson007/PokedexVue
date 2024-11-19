@@ -1,12 +1,14 @@
 <template>
   <Navbar />
   <div class="container my-5 page">
-    <SearchBar @onSearch="searchPokemon" />
+    <div class="search">
+      <SearchBar @onSearch="searchPokemon" />
+      <FilterBar @onFilter="filterByType" />
+    </div>
+
     <div v-if="isSearching" class="text-center my-4">Buscando Pokémon...</div>
     <div v-else-if="filteredPokemons.length === 0">
-      <div class="text-center my-4 text-danger">
-        Nenhum Pokémon encontrado.
-      </div>
+      <div class="text-center my-4 text-danger">Nenhum Pokémon encontrado.</div>
     </div>
     <div v-else>
       <PokemonGrid :pokemons="filteredPokemons" />
@@ -20,21 +22,24 @@ import Navbar from './components/Navbar.vue';
 import SearchBar from './components/SearchBar.vue';
 import PokemonGrid from './components/PokemonGrid.vue';
 import Pagination from './components/Pagination.vue';
+import FilterBar from './components/FilterBar.vue';
 
 export default {
-  components: { Navbar, SearchBar, PokemonGrid, Pagination },
+  components: { Navbar, SearchBar, PokemonGrid, Pagination, FilterBar },
   data() {
     return {
-      pokemons: [],
-      filteredPokemons: [],
+      pokemons: [], // Pokémon carregados na página atual
+      filteredPokemons: [], // Pokémon filtrados (incluindo por busca e tipo)
       searchQuery: '',
       isSearching: false,
       currentPage: 1,
       totalPages: 5,
+      allPokemonsLoaded: false, // Indica se todos os Pokémon foram carregados
     };
   },
   methods: {
     async fetchPokemons() {
+      this.isSearching = true;
       const offset = (this.currentPage - 1) * 30; // Limite de 30 por página
       const response = await fetch(
         `https://pokeapi.co/api/v2/pokemon?limit=30&offset=${offset}`
@@ -47,27 +52,67 @@ export default {
             res.json()
           );
 
-          // Tipos e imagem diretamente dos dados da API
           const types = pokemonDetails.types.map((typeInfo) => typeInfo.type.name);
-          const image = pokemonDetails.sprites.front_default || 'https://via.placeholder.com/150?text=No+Image';
+          const image =
+            pokemonDetails.sprites.front_default ||
+            'https://via.placeholder.com/150?text=No+Image';
 
           return {
             id: pokemonDetails.id,
             name: pokemonDetails.name,
-            image, // Usa a URL da imagem ou fallback
+            image,
             types,
           };
         })
       );
 
-      this.filteredPokemons = [...this.pokemons]; // Inicializa a lista filtrada
+      this.filteredPokemons = [...this.pokemons];
+      this.isSearching = false;
     },
 
-    async searchPokemon(query) {
-      this.searchQuery = query.toLowerCase();
+    async fetchAllPokemons() {
+      // Método para carregar todos os Pokémon (usado na busca ou filtro)
+      if (this.allPokemonsLoaded) return;
 
-      if (!this.searchQuery) {
-        // Se a busca estiver vazia, exibe os Pokémon da página atual
+      this.isSearching = true;
+      let nextUrl = 'https://pokeapi.co/api/v2/pokemon?limit=100';
+      const allPokemons = [];
+
+      while (nextUrl) {
+        const response = await fetch(nextUrl);
+        const data = await response.json();
+        allPokemons.push(...data.results);
+        nextUrl = data.next;
+      }
+
+      this.pokemons = await Promise.all(
+        allPokemons.map(async (pokemon) => {
+          const pokemonDetails = await fetch(pokemon.url).then((res) =>
+            res.json()
+          );
+
+          const types = pokemonDetails.types.map((typeInfo) => typeInfo.type.name);
+          const image =
+            pokemonDetails.sprites.front_default ||
+            'https://via.placeholder.com/150?text=No+Image';
+
+          return {
+            id: pokemonDetails.id,
+            name: pokemonDetails.name,
+            image,
+            types,
+          };
+        })
+      );
+
+      this.allPokemonsLoaded = true; // Marca que todos os Pokémon foram carregados
+      this.filteredPokemons = [...this.pokemons];
+      this.isSearching = false;
+    },
+
+    async filterByType(type) {
+      if (!type) {
+        // Remove o filtro
         this.filteredPokemons = [...this.pokemons];
         return;
       }
@@ -75,38 +120,35 @@ export default {
       this.isSearching = true;
 
       try {
-        // Busca todos os Pokémon para realizar a pesquisa
-        let nextUrl = 'https://pokeapi.co/api/v2/pokemon?limit=100';
-        const allPokemons = [];
+        // Carrega todos os Pokémon (se ainda não carregados)
+        await this.fetchAllPokemons();
 
-        while (nextUrl) {
-          const response = await fetch(nextUrl);
-          const data = await response.json();
-          allPokemons.push(...data.results);
-          nextUrl = data.next;
-        }
-
-        const matchedPokemons = allPokemons.filter((pokemon) =>
-          pokemon.name.toLowerCase().includes(this.searchQuery)
+        // Filtra os Pokémon localmente pelo tipo
+        this.filteredPokemons = this.pokemons.filter((pokemon) =>
+          pokemon.types.includes(type)
         );
+      } catch (error) {
+        console.error('Erro ao filtrar por tipo:', error);
+        this.filteredPokemons = [];
+      } finally {
+        this.isSearching = false;
+      }
+    },
 
-        // Busca detalhes dos Pokémon encontrados
-        this.filteredPokemons = await Promise.all(
-          matchedPokemons.map(async (pokemon) => {
-            const pokemonDetails = await fetch(pokemon.url).then((res) =>
-              res.json()
-            );
-            const types = pokemonDetails.types.map(
-              (typeInfo) => typeInfo.type.name
-            );
+    async searchPokemon(query) {
+      this.searchQuery = query.toLowerCase();
 
-            return {
-              id: pokemonDetails.id,
-              name: pokemonDetails.name,
-              image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonDetails.id}.png`,
-              types,
-            };
-          })
+      if (!this.searchQuery) {
+        this.filteredPokemons = [...this.pokemons];
+        return;
+      }
+
+      this.isSearching = true;
+
+      try {
+        await this.fetchAllPokemons(); // Carrega todos os Pokémon para realizar a busca
+        this.filteredPokemons = this.pokemons.filter((pokemon) =>
+          pokemon.name.toLowerCase().includes(this.searchQuery)
         );
       } catch (error) {
         console.error('Erro ao buscar Pokémon:', error);
@@ -118,17 +160,36 @@ export default {
 
     changePage(page) {
       this.currentPage = page;
-      this.fetchPokemons(); // Recarrega os Pokémon da página atual
+      this.fetchPokemons(); // Carrega a página atual
     },
   },
 
   mounted() {
-    this.fetchPokemons();
+    this.fetchPokemons(); // Inicializa com os Pokémon da página 1
   },
 };
 </script>
+
 <style>
 .page {
   margin-top: 8rem !important;
+  padding: 0 1rem; /* Para mobile */
+}
+.search{
+  display: flex;
+  
+}
+/* Ajustes para mobile */
+@media (max-width: 768px) {
+  .search-container {
+    margin-top: 2rem;
+  }
+  .filter-bar {
+    margin: 1rem 0;
+  }
+  .pagination {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
 }
 </style>

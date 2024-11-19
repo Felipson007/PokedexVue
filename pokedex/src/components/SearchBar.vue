@@ -17,11 +17,15 @@ export default {
   data() {
     return {
       query: '',
+      timeout: null, // Para o debounce
     };
   },
   methods: {
     emitSearch() {
-      this.$emit('onSearch', this.query);
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        this.$emit('onSearch', this.query);
+      }, 300); // Aguarda 300ms antes de emitir o evento
     },
   },
 };
