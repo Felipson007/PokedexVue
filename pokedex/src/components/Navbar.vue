@@ -56,7 +56,7 @@ export default {
 
 .nav-link.active {
   font-weight: 700; 
-  color: #2c2c2c;
+  color: #2c2c2c; /* Preto para o ativo */
 }
 
 </style>

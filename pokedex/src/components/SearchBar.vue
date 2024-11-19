@@ -1,5 +1,5 @@
 <template>
-  <div class="search-container">
+  <div id="searchbar" class="search-container">
     <input
       type="text"
       class="search-input"

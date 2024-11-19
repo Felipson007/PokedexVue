@@ -1,11 +1,12 @@
 <template>
   <div class="card shadow-sm border-0 p-3 text-center">
-    <p class="text-muted mb-0 id">#{{ pokemon.id }}</p>
+    <p class="text-muted mb-0 id" >#{{ pokemon.id }}</p>
     <img
       :src="pokemon.image"
       class="card-img-top mx-auto"
       :alt="pokemon.name"
       style="width: 100px;"
+      @error="onImageError"
     />
     <div class="card-body p-2">
       <div class="mb-2">
@@ -18,6 +19,7 @@
           {{ type }}
         </span>
       </div>
+   
       <h6 class="fw-bold mb-0">{{ pokemon.name }}</h6>
     </div>
   </div>
@@ -50,12 +52,16 @@ export default {
         flying: '#A890F0',
       };
 
-      return typeColors[type.toLowerCase()] || '#A8A8A8'; 
+      return typeColors[type.toLowerCase()] || '#A8A8A8';
+    },
+
+    // Fallback para imagens ausentes
+    onImageError(event) {
+      event.target.src = 'https://via.placeholder.com/150?text=No+Image';
     },
   },
 };
 </script>
-
 <style scoped>
 .card {
   border-radius: 10px;
@@ -66,7 +72,7 @@ export default {
   padding: 5px 10px;
   border-radius: 12px;
 }
-.id[data-v-63ebbf9b] {
+.id{
     display: flex;
     justify-content: flex-end;
    

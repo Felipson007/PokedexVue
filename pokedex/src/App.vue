@@ -35,33 +35,32 @@ export default {
   },
   methods: {
     async fetchPokemons() {
-      // Calcula o offset com base na página atual
-      const offset = (this.currentPage - 1) * 30;
+      const offset = (this.currentPage - 1) * 30; // Limite de 30 por página
       const response = await fetch(
         `https://pokeapi.co/api/v2/pokemon?limit=30&offset=${offset}`
       );
       const data = await response.json();
 
-      // Busca os detalhes dos Pokémon da página atual
       this.pokemons = await Promise.all(
-        data.results.map(async (pokemon, index) => {
+        data.results.map(async (pokemon) => {
           const pokemonDetails = await fetch(pokemon.url).then((res) =>
             res.json()
           );
-          const types = pokemonDetails.types.map(
-            (typeInfo) => typeInfo.type.name
-          );
+
+          // Tipos e imagem diretamente dos dados da API
+          const types = pokemonDetails.types.map((typeInfo) => typeInfo.type.name);
+          const image = pokemonDetails.sprites.front_default || 'https://via.placeholder.com/150?text=No+Image';
 
           return {
-            id: offset + index + 1,
-            name: pokemon.name,
-            image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${offset + index + 1}.png`,
+            id: pokemonDetails.id,
+            name: pokemonDetails.name,
+            image, // Usa a URL da imagem ou fallback
             types,
           };
         })
       );
 
-      this.filteredPokemons = [...this.pokemons];
+      this.filteredPokemons = [...this.pokemons]; // Inicializa a lista filtrada
     },
 
     async searchPokemon(query) {
