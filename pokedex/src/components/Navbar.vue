@@ -45,17 +45,18 @@ export default {
 
 .nav-link {
   font-size: 16px;
-  color: #6c757d; /* Cinza escuro */
+  color: #6c757d; 
   text-decoration: none;
   font-weight: 500;
 }
 
 .nav-link:hover {
-  color: #2c2c2c; /* Preto ao passar o mouse */
+  color: #2c2c2c; 
 }
 
 .nav-link.active {
-  font-weight: 700; /* Negrito para o link ativo */
-  color: #2c2c2c; /* Preto para o ativo */
+  font-weight: 700; 
+  color: #2c2c2c;
 }
+
 </style>

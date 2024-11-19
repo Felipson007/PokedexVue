@@ -28,6 +28,7 @@ export default {
 </script>
 
 <style scoped>
+
 .search-container {
   position: relative;
   display: flex;
@@ -37,6 +38,7 @@ export default {
   margin: 2.5rem;
   padding: 0 16px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 6em;
 }
 
 .search-input {
