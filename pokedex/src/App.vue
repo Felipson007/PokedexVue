@@ -23,6 +23,7 @@
       ↑ Topo
     </button>
   </div>
+  <ScrollToTopButton />
 </template>
 
 <script>
@@ -31,9 +32,10 @@ import SearchBar from './components/SearchBar.vue';
 import PokemonGrid from './components/PokemonGrid.vue';
 import Pagination from './components/Pagination.vue';
 import FilterBar from './components/FilterBar.vue';
+import ScrollToTopButton from "./components/ScrollToTopButton.vue";
 
 export default {
-  components: { Navbar, SearchBar, PokemonGrid, Pagination, FilterBar },
+  components: { Navbar, SearchBar, PokemonGrid, Pagination, FilterBar, ScrollToTopButton },
   data() {
     return {
       pokemons: [],
@@ -171,7 +173,7 @@ export default {
   right: 20px;
   padding: 10px 15px;
   font-size: 14px;
-  background-color: #2c2c2c;
+  background-color: #6c757d;
   color: white;
   border: none;
   border-radius: 50%;

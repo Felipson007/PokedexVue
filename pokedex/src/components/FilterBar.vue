@@ -1,41 +1,40 @@
 <template>
-  <div class="filter-bar">
-    <label for="type">Filtrar por Tipo:</label>
-    <div class="dropdown">
-      <button
-        class="btn btn-secondary dropdown-toggle"
-        type="button"
-        @click="toggleDropdown"
-      >
-        {{ selectedTypeLabel }}
-      </button>
-      <ul
-        class="dropdown-menu"
-        :class="{ show: dropdownOpen }"
-        style="max-height: 200px; overflow-y: auto;"
-      >
-        <li>
-          <a
-            class="dropdown-item"
-            href="#"
-            :class="{ active: selectedType === '' }"
-            @click="selectType('')"
-          >
-            Todos
-          </a>
-        </li>
-        <li v-for="type in types" :key="type.name">
-          <a
-            class="dropdown-item"
-            href="#"
-            :class="{ active: selectedType === type.name }"
-            @click="selectType(type.name)"
-          >
-            {{ type.name }}
-          </a>
-        </li>
-      </ul>
-    </div>
+  <div class="filter-bar dropdown" ref="dropdownContainer">
+    <label class="labelText" for="type">Filtrar por Tipo de Pokémon:</label>
+    <button
+      class="btn btn-secondary dropdown-toggle"
+      type="button"
+      id="dropdownMenuButton"
+      @click="toggleDropdown"
+    >
+      {{ selectedTypeLabel }}
+    </button>
+    <ul
+      class="dropdown-menu"
+      :class="{ show: dropdownOpen }"
+      aria-labelledby="dropdownMenuButton"
+    >
+      <li>
+        <a
+          class="dropdown-item"
+          href="#"
+          :class="{ active: selectedType === '' }"
+          @click="selectType('')"
+        >
+          Todos
+        </a>
+      </li>
+      <li v-for="type in types" :key="type.name">
+        <a
+          class="dropdown-item"
+          href="#"
+          :class="{ active: selectedType === type.name }"
+          @click="selectType(type.name)"
+        >
+          {{ type.name }}
+        </a>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -43,9 +42,9 @@
 export default {
   data() {
     return {
-      types: [],
-      selectedType: '',
-      dropdownOpen: false,
+      types: [], // Lista de tipos
+      selectedType: '', // Tipo selecionado
+      dropdownOpen: false, // Controle do estado de abertura do dropdown
     };
   },
   computed: {
@@ -62,6 +61,11 @@ export default {
       this.$emit('onFilter', type);
       this.dropdownOpen = false; // Fecha o dropdown ao selecionar
     },
+    handleClickOutside(event) {
+      if (this.$refs.dropdownContainer && !this.$refs.dropdownContainer.contains(event.target)) {
+        this.dropdownOpen = false; // Fecha o dropdown se o clique for fora
+      }
+    },
     async fetchTypes() {
       try {
         const response = await fetch('https://pokeapi.co/api/v2/type');
@@ -74,9 +78,14 @@ export default {
   },
   mounted() {
     this.fetchTypes();
+    document.addEventListener('click', this.handleClickOutside); // Adiciona o evento de clique no documento
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleClickOutside); // Remove o evento ao desmontar o componente
   },
 };
 </script>
+
 
 <style scoped>
 /* Estilo do menu do dropdown */
@@ -105,27 +114,44 @@ export default {
 .filter-bar {
   display: flex;
   flex-direction: column;
-  align-items: center;
   margin: 1.5em 0;
 }
 
+/* Estilo do menu do dropdown */
 .dropdown-menu {
-  max-height: 200px;
-  overflow-y: auto;
+  max-height: 200px; /* Limita a altura */
+  overflow-y: auto; /* Adiciona scroll vertical */
+  width: 100%; /* Garante que o dropdown ocupe toda a largura do botão */
+  left: 0; /* Alinha o dropdown ao início do botão */
+  top: 100%; /* Coloca o dropdown exatamente abaixo do botão */
+  border-radius: 0 0 8px 8px; /* Adiciona bordas arredondadas na parte inferior */
+  border: 1px solid #ddd; /* Bordas consistentes */
 }
 
+/* Botão do dropdown */
 .dropdown-toggle {
-  min-width: 200px;
+  min-width: 200px; /* Define um tamanho mínimo para o botão */
+  width: 100%; /* Faz com que o botão ocupe toda a largura disponível */
   text-align: center;
 }
 
+.labelText{
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+/* Para dispositivos móveis */
 @media (max-width: 768px) {
   .filter-bar {
     width: 100%;
   }
 
   .dropdown-toggle {
-    width: 100%;
+    width: 100%; /* O botão ocupa toda a largura */
+  }
+
+  .dropdown-menu {
+    width: 100%; /* O dropdown ocupa a mesma largura do botão */
   }
 }
 </style>
