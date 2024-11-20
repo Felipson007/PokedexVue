@@ -3,23 +3,14 @@
     <ul class="pagination">
       <!-- Botão Anterior -->
       <li class="page-item" :class="{ disabled: currentPage === 1 }">
-        <button 
-          class="page-link" 
-          :aria-disabled="currentPage === 1" 
-          aria-label="Página anterior" 
-          @click="$emit('changePage', currentPage - 1)"
-        >
+        <button class="page-link" :aria-disabled="currentPage === 1" aria-label="Página anterior"
+          @click="$emit('changePage', currentPage - 1)">
           Anterior
         </button>
       </li>
 
       <!-- Botões de páginas -->
-      <li 
-        class="page-item" 
-        v-for="page in totalPages" 
-        :key="page" 
-        :class="{ active: currentPage === page }"
-      >
+      <li class="page-item" v-for="page in totalPages" :key="page" :class="{ active: currentPage === page }">
         <button class="page-link" @click="$emit('changePage', page)">
           {{ page }}
         </button>
@@ -27,12 +18,8 @@
 
       <!-- Botão Próximo -->
       <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-        <button 
-          class="page-link" 
-          :aria-disabled="currentPage === totalPages" 
-          aria-label="Próxima página" 
-          @click="$emit('changePage', currentPage + 1)"
-        >
+        <button class="page-link" :aria-disabled="currentPage === totalPages" aria-label="Próxima página"
+          @click="$emit('changePage', currentPage + 1)">
           Próximo
         </button>
       </li>
@@ -70,7 +57,8 @@ export default {
 }
 
 .page-item.disabled .page-link {
-  color: #6c757d; /* Cor cinza claro para botões desabilitados */
+  color: #6c757d;
+  /* Cor cinza claro para botões desabilitados */
   cursor: not-allowed;
 }
 
@@ -91,7 +79,7 @@ export default {
 }
 
 ul.pagination {
-  --bs-pagination-border-color: unset; 
+  --bs-pagination-border-color: unset;
   --bs-pagination-border-radius: unset;
 }
 </style>

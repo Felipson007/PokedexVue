@@ -1,12 +1,7 @@
 <template>
   <div id="searchbar" class="search-container">
-    <input
-      type="text"
-      class="search-input"
-      placeholder="Faça uma busca pelo nome do Pokémon"
-      v-model="query"
-      @input="emitSearch"
-    />
+    <input type="text" class="search-input" placeholder="Faça uma busca pelo nome do Pokémon" v-model="query"
+      @input="emitSearch" />
     <i class="fa-solid fa-magnifying-glass search-icon"></i>
   </div>
 </template>
@@ -17,7 +12,7 @@ export default {
   data() {
     return {
       query: '',
-      timeout: null, // Para o debounce
+      timeout: null,
     };
   },
   methods: {
@@ -25,14 +20,13 @@ export default {
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
         this.$emit('onSearch', this.query);
-      }, 300); // Aguarda 300ms antes de emitir o evento
+      }, 300);
     },
   },
 };
 </script>
 
 <style scoped>
-
 .search-container {
   position: relative;
   display: flex;
@@ -68,5 +62,4 @@ export default {
 .search-container:focus-within {
   box-shadow: 0 0 0 2px #e2e8f0;
 }
-
 </style>

@@ -1,45 +1,41 @@
 <template>
-    <button
-      v-show="visible"
-      class="btn btn-primary scroll-to-top"
-      @click="scrollToTop"
-    >
-      ↑
+    <button v-show="visible" class="btn btn-primary scroll-to-top" @click="scrollToTop">
+        ↑
     </button>
-  </template>
-  
-  <script>
-  export default {
+</template>
+
+<script>
+export default {
     name: "ScrollToTopButton",
     data() {
-      return {
-        visible: false, // Define se o botão está visível ou não
-      };
+        return {
+            visible: false,
+        };
     },
     methods: {
-      scrollToTop() {
-        window.scrollTo({ top: 0, behavior: "smooth" }); // Volta ao topo suavemente
-      },
-      handleScroll() {
-        this.visible = window.scrollY > 200; // Exibe o botão apenas quando o scroll for maior que 200px
-      },
+        scrollToTop() {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        },
+        handleScroll() {
+            this.visible = window.scrollY > 200;
+        },
     },
     mounted() {
-      window.addEventListener("scroll", this.handleScroll); // Adiciona evento de scroll ao montar o componente
+        window.addEventListener("scroll", this.handleScroll);
     },
     beforeUnmount() {
-      window.removeEventListener("scroll", this.handleScroll); // Remove o evento ao desmontar o componente
+        window.removeEventListener("scroll", this.handleScroll);
     },
-  };
-  </script>
-  
-  <style scoped>
-  .scroll-to-top {
+};
+</script>
+
+<style scoped>
+.scroll-to-top {
     position: fixed;
     bottom: 20px;
     right: 20px;
     z-index: 1000;
-    background-color: #6c757d; /* Cor do botão (Bootstrap Primary) */
+    background-color: #6c757d;
     color: white;
     border: none;
     border-radius: 50%;
@@ -51,10 +47,12 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     font-size: 18px;
-  }
-  
-  .scroll-to-top:hover {
-    background-color: #0056b3; /* Cor mais escura no hover */
-  }
-  </style>
-  
+}
+
+@media (max-width: 768px) {
+    .scroll-to-top {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+}
+</style>

@@ -9,19 +9,8 @@
     </div>
     <div v-else>
       <PokemonGrid :pokemons="paginatedPokemons" />
-      <Pagination
-        :currentPage="currentPage"
-        :totalPages="totalPages"
-        @changePage="changePage"
-      />
+      <Pagination :currentPage="currentPage" :totalPages="totalPages" @changePage="changePage" />
     </div>
-    <button
-      v-show="showScrollTopButton"
-      class="scroll-to-top"
-      @click="scrollToTop"
-    >
-      ↑ Topo
-    </button>
   </div>
   <ScrollToTopButton />
 </template>
@@ -126,8 +115,8 @@ export default {
         this.filteredPokemons =
           this.selectedType && this.selectedType !== ''
             ? this.pokemons.filter((pokemon) =>
-                pokemon.types.includes(this.selectedType)
-              )
+              pokemon.types.includes(this.selectedType)
+            )
             : [...this.pokemons];
       } else {
         this.filteredPokemons = this.filteredPokemons.filter((pokemon) =>
@@ -142,73 +131,41 @@ export default {
       this.currentPage = page;
     },
 
-    scrollToTop() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    },
-
-    handleScroll() {
-      this.showScrollTopButton = window.scrollY > 200;
-    },
   },
   mounted() {
     this.fetchPokemons();
-    window.addEventListener('scroll', this.handleScroll);
-  },
-  beforeDestroy() {
-    window.removeEventListener('scroll', this.handleScroll);
   },
 };
 </script>
 
 <style>
-
 .page {
   margin-top: 8rem !important;
   padding: 0 1rem;
 }
 
-.scroll-to-top {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 10px 15px;
-  font-size: 14px;
-  background-color: #6c757d;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  display: none;
-}
-
-.scroll-to-top:hover {
-  background-color: #444;
-}
-/* Estilo global da página */
 body {
-  overflow-y: scroll; /* Garante que a rolagem esteja sempre ativa */
-  scroll-behavior: smooth; /* Rolagem suave */
+  overflow-y: scroll;
+  scroll-behavior: smooth;
 }
 
-/* Personalizar barra de rolagem da página */
 body::-webkit-scrollbar {
-  width: 12px; /* Largura da barra */
+  width: 12px;
 }
 
 body::-webkit-scrollbar-thumb {
-  background-color: #6c757d; /* Cor da barra */
-  border-radius: 10px; /* Bordas arredondadas */
+  background-color: #6c757d;
+  border-radius: 10px;
 }
 
 body::-webkit-scrollbar-thumb:hover {
-  background-color: #495057; /* Cor ao passar o mouse */
+  background-color: #495057;
 }
 
 body::-webkit-scrollbar-track {
-  background-color: #f8f9fa; /* Fundo do track */
+  background-color: #f8f9fa;
 }
+
 @media (max-width: 768px) {
   .scroll-to-top {
     font-size: 12px;

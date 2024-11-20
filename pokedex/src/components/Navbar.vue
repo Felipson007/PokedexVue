@@ -38,17 +38,18 @@ export default {
   font-size: 1.5rem;
   cursor: pointer;
 }
+
 .navbar {
-    display: flex;
-    align-items: center;
-    position: absolute;
-    justify-content: space-between;
-    padding: 10px 20px;
-    top: 0;
-    width: 100%;
-    left: 0;
-    background-color: #ffffff;
-    border-bottom: 2px solid #e2e2e2;
+  display: flex;
+  align-items: center;
+  position: absolute;
+  justify-content: space-between;
+  padding: 10px 20px;
+  top: 0;
+  width: 100%;
+  left: 0;
+  background-color: #ffffff;
+  border-bottom: 2px solid #e2e2e2;
 }
 
 
@@ -65,6 +66,7 @@ export default {
   .navbar-toggler {
     display: block;
   }
+
   .navbar-links {
     display: none;
     flex-direction: column;
