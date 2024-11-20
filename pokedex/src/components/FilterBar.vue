@@ -1,62 +1,131 @@
 <template>
-    <div class="filter-bar">
-      <label for="type">Filtrar por Tipo:</label>
-      <select id="type" v-model="selectedType" @change="emitFilter">
-        <option value="">Todos</option>
-        <option v-for="type in types" :key="type.name" :value="type.name">
-          {{ type.name }}
-        </option>
-      </select>
+  <div class="filter-bar">
+    <label for="type">Filtrar por Tipo:</label>
+    <div class="dropdown">
+      <button
+        class="btn btn-secondary dropdown-toggle"
+        type="button"
+        @click="toggleDropdown"
+      >
+        {{ selectedTypeLabel }}
+      </button>
+      <ul
+        class="dropdown-menu"
+        :class="{ show: dropdownOpen }"
+        style="max-height: 200px; overflow-y: auto;"
+      >
+        <li>
+          <a
+            class="dropdown-item"
+            href="#"
+            :class="{ active: selectedType === '' }"
+            @click="selectType('')"
+          >
+            Todos
+          </a>
+        </li>
+        <li v-for="type in types" :key="type.name">
+          <a
+            class="dropdown-item"
+            href="#"
+            :class="{ active: selectedType === type.name }"
+            @click="selectType(type.name)"
+          >
+            {{ type.name }}
+          </a>
+        </li>
+      </ul>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    name: 'FilterBar',
-    data() {
-      return {
-        types: [], // Tipos de Pokémon carregados da API
-        selectedType: '', // Tipo selecionado no filtro
-      };
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      types: [],
+      selectedType: '',
+      dropdownOpen: false,
+    };
+  },
+  computed: {
+    selectedTypeLabel() {
+      return this.selectedType || 'Todos';
     },
-    methods: {
-      emitFilter() {
-        this.$emit('onFilter', this.selectedType);
-      },
-      async fetchTypes() {
-        try {
-          const response = await fetch('https://pokeapi.co/api/v2/type');
-          const data = await response.json();
-          this.types = data.results; // Armazena os tipos carregados
-        } catch (error) {
-          console.error('Erro ao carregar tipos:', error);
-        }
-      },
+  },
+  methods: {
+    toggleDropdown() {
+      this.dropdownOpen = !this.dropdownOpen;
     },
-    mounted() {
-      this.fetchTypes(); // Carrega os tipos ao montar o componente
+    selectType(type) {
+      this.selectedType = type;
+      this.$emit('onFilter', type);
+      this.dropdownOpen = false; // Fecha o dropdown ao selecionar
     },
-  };
-  </script>
-  
-  <style scoped>
+    async fetchTypes() {
+      try {
+        const response = await fetch('https://pokeapi.co/api/v2/type');
+        const data = await response.json();
+        this.types = data.results;
+      } catch (error) {
+        console.error('Erro ao carregar tipos:', error);
+      }
+    },
+  },
+  mounted() {
+    this.fetchTypes();
+  },
+};
+</script>
+
+<style scoped>
+/* Estilo do menu do dropdown */
+.dropdown-menu {
+  max-height: 200px; /* Limita a altura */
+  overflow-y: auto; /* Adiciona scroll vertical */
+}
+
+/* Personalizar a barra de rolagem */
+.dropdown-menu::-webkit-scrollbar {
+  width: 8px; /* Largura da barra */
+}
+
+.dropdown-menu::-webkit-scrollbar-thumb {
+  background-color: #6c757d; /* Cor da barra */
+  border-radius: 10px; /* Bordas arredondadas */
+}
+
+.dropdown-menu::-webkit-scrollbar-thumb:hover {
+  background-color: #495057; /* Cor ao passar o mouse */
+}
+
+.dropdown-menu::-webkit-scrollbar-track {
+  background-color: #f8f9fa; /* Fundo do track */
+}
+.filter-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1.5em 0;
+}
+
+.dropdown-menu {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dropdown-toggle {
+  min-width: 200px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
   .filter-bar {
-    margin-left: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    width: 100%;
   }
-  
-  label {
-    font-weight: bold;
-    margin-bottom: 4px;
+
+  .dropdown-toggle {
+    width: 100%;
   }
-  
-  select {
-    padding: 8px;
-    font-size: 14px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-  }
-  </style>
-  
+}
+</style>
