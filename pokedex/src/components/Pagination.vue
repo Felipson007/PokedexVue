@@ -35,7 +35,6 @@ export default {
 </script>
 
 <style scoped>
-/* Estilo geral da paginação */
 .pagination {
   display: flex;
   list-style: none;
@@ -58,10 +57,40 @@ export default {
 
 .page-item.disabled .page-link {
   color: #6c757d;
-  /* Cor cinza claro para botões desabilitados */
   cursor: not-allowed;
 }
 
+@media (max-width: 768px) {
+  .pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .page-item {
+    margin: 0;
+  }
+
+  .page-link {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: none;
+    color: #2C2C2C;
+  }
+
+  .page-item.active .page-link {
+    background-color: #2C2C2C;
+    color: #ffffff;
+  }
+
+  .page-item.disabled .page-link {
+    opacity: 0.5;
+  }
+}
 .page-item.active .page-link {
   background-color: #2C2C2C;
   color: #ffffff;
