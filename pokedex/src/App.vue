@@ -50,7 +50,7 @@ export default {
       this.isSearching = true;
       try {
         const response = await fetch(
-          `https://pokeapi.co/api/v2/pokemon?limit=150`
+          `https://pokeapi.co/api/v2/pokemon?limit=500`
         );
         const data = await response.json();
 
